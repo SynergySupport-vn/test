@@ -1,0 +1,103 @@
+
+      // Smooth scroll to section and adjust for sticky header
+      function scrollToSection(id) {
+        let element = document.getElementById(id);
+        if (element) {
+          let headerHeight = document.querySelector('header').offsetHeight;
+          window.scrollTo({
+            top: element.offsetTop - headerHeight,
+            behavior: 'smooth',
+          });
+        }
+      }
+
+      // Event listeners for navigation links
+      document.querySelectorAll('.nav-link').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          let sectionId = link.getAttribute('href').replace('#', '');
+          scrollToSection(sectionId);
+        });
+      });
+
+      // JavaScript for dynamic search filtering
+      document
+        .getElementById('search-input')
+        .addEventListener('input', function () {
+          let query = this.value.trim().toLowerCase();
+          let articles = document.querySelectorAll('.article');
+
+          articles.forEach(function (article) {
+            let text = article.textContent.toLowerCase();
+            let category = article.closest('.category').id;
+            let content = article
+              .querySelector('.hidden')
+              .textContent.toLowerCase();
+
+            if (
+              text.includes(query) ||
+              content.includes(query) ||
+              category.includes(query)
+            ) {
+              article.style.display = 'block';
+            } else {
+              article.style.display = 'none';
+            }
+          });
+        });
+
+      // JavaScript for toggling content in articles
+      let toggleButtons = document.querySelectorAll('.toggle-btn');
+      toggleButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          event.stopPropagation(); // Prevent event bubbling to parent article
+          let content = button.previousElementSibling;
+          if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            button.textContent = 'Show Less';
+          } else {
+            content.classList.add('hidden');
+            button.textContent = 'Read More';
+          }
+        });
+      });
+
+      // JavaScript for modal
+      let modal = document.getElementById('modal');
+      let modalTitle = modal.querySelector('.modal-title');
+      let modalBody = modal.querySelector('.modal-body');
+      let articles = document.querySelectorAll('.article');
+      articles.forEach(function (article) {
+        article.addEventListener('click', function () {
+          modalTitle.textContent = article.querySelector('h3').textContent;
+          modalBody.innerHTML = article.querySelector('.hidden').innerHTML;
+          modal.style.display = 'flex';
+        });
+      });
+
+      // Close the modal when clicking outside of it or on the close button
+      window.addEventListener('click', function (event) {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal.style.display === 'flex') {
+          modal.style.display = 'none';
+        }
+      });
+
+      modal.querySelector('.close').addEventListener('click', function () {
+        modal.style.display = 'none';
+      });
+
+      // Close modal when 'Show Less' button is clicked
+      let showLessButtons = document.querySelectorAll('.show-less-btn');
+      showLessButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          event.stopPropagation();
+          modal.style.display = 'flex';
+        });
+      });
+   
